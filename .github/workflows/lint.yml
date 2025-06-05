@@ -11,9 +11,12 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: "3.12"
-    - name: Install linters
+    - name: Install poetry
       run: |
-        pip install black flake8 isort pyright
+        pip install poetry
+    - name: Install dependencies
+      run: |
+        poetry update
     - name: Run Black
       run: black --check dh_platform/ tests/
     - name: Run Flake8
@@ -22,4 +25,4 @@ jobs:
     - name: Run isort
       run: isort --check-only dh_platform/ tests/
     - name: Run pyright
-      run: pyright dh_platform/
+      run: poetry run pyright dh_platform/
