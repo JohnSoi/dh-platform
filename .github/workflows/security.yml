@@ -1,0 +1,24 @@
+name: Security Checks
+
+on:
+  schedule:
+    - cron: "0 0 * * 1" # Раз в неделю
+  push:
+    branches: [ main ]
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run Bandit
+      uses: PyCQA/bandit@master
+      with:
+        args: -r dh_platform/ -x tests/ -ll
+
+  dependabot:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Scan dependencies
+      uses: dependency-review-action@v3
