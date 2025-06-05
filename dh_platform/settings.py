@@ -8,7 +8,8 @@ from pydantic_settings import BaseSettings
 
 
 class BaseAppSettings(BaseSettings):
-    """Базовые настройки приложений
+    """
+    Базовые настройки приложений
 
     Attributes:
         APP_ENV (str): Тип окружения
@@ -21,13 +22,15 @@ class BaseAppSettings(BaseSettings):
     DEBUG: bool = False
 
     class Config:
+        """Класс конфигурации настроек"""
         env_file = ".env"
         env_prefix = "CORE_"
 
 
 @lru_cache
 def get_core_settings() -> BaseAppSettings:
-    """Получение объекта базовых настроек
+    """
+    Получение объекта базовых настроек
 
     Returns:
         BaseAppSettings: Экземпляр класса базовых настроек
