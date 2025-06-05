@@ -8,14 +8,23 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../dh_platform'))  # Путь к вашему пакету
+sys.path.insert(0, os.path.abspath('../../dh-platform'))  # Путь к вашему пакету
 
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # Для поддержки Google-style
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.doctest',
+    'sphinx.ext.coverage',
+    'sphinx_copybutton'
 ]
+
+# Настройки для autodoc
+autodoc_default_options = {
+    'members': True,
+    'show-inheritance': True,
+}
 
 html_theme = 'sphinx_rtd_theme'  # Тема ReadTheDocs
 
@@ -26,8 +35,6 @@ author = 'JohnSoi'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
-
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
@@ -36,5 +43,4 @@ language = 'ru'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
 html_static_path = ['_static']

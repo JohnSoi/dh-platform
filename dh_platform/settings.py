@@ -1,14 +1,19 @@
+"""Модуль базовых настроек"""
+
+__author__: str = "Старков Е.П."
+
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
 class BaseAppSettings(BaseSettings):
-    """
-    Базовые настройки всех приложений экосистемы
+    """Базовые настройки приложений
 
     Attributes:
-        APP_ENV (str): Текущее окружение
+        APP_ENV (str): Тип окружения
         DEBUG (bool): Режим отладки
+    Warnings:
+        Данные переменные должны быть описаны в файле .env
     """
     APP_ENV: str = "production"
     DEBUG: bool = False
@@ -20,4 +25,25 @@ class BaseAppSettings(BaseSettings):
 
 @lru_cache
 def get_core_settings() -> BaseAppSettings:
+    """Получение объекта базовых настроек
+
+    Returns:
+        BaseAppSettings: Экземпляр класса базовых настроек
+    Examples:
+        Пример использования в конфиге приложений:
+
+        >>> from pydantic import Field
+        >>> from pydantic_settings import BaseSettings
+        >>> from dh_platform.settings import get_core_settings
+        >>>
+        >>> class AllSettings(BaseSettings):
+        ...     core: BaseAppSettings = Field(default_factory=get_core_settings)
+        ...
+        ...     class Config:
+        ...         env_nested_delimiter = "__"
+        >>>
+        >>> @lru_cache
+        >>> def get_all_settings() -> AllSettings:
+        ...    return AllSettings()
+    """
     return BaseAppSettings()
