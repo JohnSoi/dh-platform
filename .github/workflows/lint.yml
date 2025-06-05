@@ -13,12 +13,13 @@ jobs:
         python-version: "3.12"
     - name: Install linters
       run: |
-        pip install black flake8 isort mypy
+        pip install black flake8 isort pyright
     - name: Run Black
       run: black --check dh_platform/ tests/
     - name: Run Flake8
-      run: flake8 dh_platform/ tests/
+      run: flake8 dh_platform/ tests/ --max-line-length 120
+
     - name: Run isort
       run: isort --check-only dh_platform/ tests/
-    - name: Run mypy
-      run: mypy dh_platform/
+    - name: Run pyright
+      run: pyright dh_platform/

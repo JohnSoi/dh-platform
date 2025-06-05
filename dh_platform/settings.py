@@ -2,8 +2,9 @@
 
 __author__: str = "Старков Е.П."
 
-from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+from pydantic_settings import BaseSettings
 
 
 class BaseAppSettings(BaseSettings):
@@ -15,6 +16,7 @@ class BaseAppSettings(BaseSettings):
     Warnings:
         Данные переменные должны быть описаны в файле .env
     """
+
     APP_ENV: str = "production"
     DEBUG: bool = False
 
