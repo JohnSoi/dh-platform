@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 pydantic-settings = "^2.9.1"
+sqlalchemy = "^2.0.41"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^8.2.3"

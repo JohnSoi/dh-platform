@@ -23,6 +23,7 @@ class BaseAppSettings(BaseSettings):
 
     class Config:
         """Класс конфигурации настроек"""
+
         env_file = ".env"
         env_prefix = "CORE_"
 
