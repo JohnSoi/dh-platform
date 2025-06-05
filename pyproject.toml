@@ -1,12 +1,14 @@
 [tool.poetry]
 name = "dh-platform"
-version = "0.1.0"
-description = ""
+version = "0.0.1"
+description = "Платформа продуктов Digital Horizons"
 authors = ["JohnSoi <un.perso@yandex.ru>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+fastapi = "^0.95.2"
+sqlalchemy = "^2.0.15"
 
 
 [build-system]

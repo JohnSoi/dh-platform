@@ -1,0 +1,24 @@
+name: Linting
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+    - name: Install linters
+      run: |
+        pip install black flake8 isort mypy
+    - name: Run Black
+      run: black --check dh_platform/ tests/
+    - name: Run Flake8
+      run: flake8 dh_platform/ tests/
+    - name: Run isort
+      run: isort --check-only dh_platform/ tests/
+    - name: Run mypy
+      run: mypy dh_platform/
