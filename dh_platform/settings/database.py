@@ -72,4 +72,4 @@ def get_db_settings() -> DatabaseSettings:
         >>> def get_all_settings() -> AllSettings:
         ...    return AllSettings()
     """
-    return DatabaseSettings() # type: ignore[call-arg]
+    return DatabaseSettings()  # type: ignore[call-arg]

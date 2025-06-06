@@ -58,4 +58,4 @@ def get_core_settings() -> BaseAppSettings:
         >>> def get_all_settings() -> AllSettings:
         ...    return AllSettings()
     """
-    return BaseAppSettings() # type: ignore[call-arg]
+    return BaseAppSettings()  # type: ignore[call-arg]
