@@ -4,4 +4,4 @@ dh\_platform.settings
 
 Состав пакета
 -----------------------------------
-.. automodule:: dh_platform.settings
+.. automodule:: dh_platform.settings.base

@@ -7,6 +7,7 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings
 
 
+# pyright: ignore[reportCallIssue]
 class BaseAppSettings(BaseSettings):
     """
     Базовые настройки приложений
@@ -14,18 +15,23 @@ class BaseAppSettings(BaseSettings):
     Attributes:
         APP_ENV (str): Тип окружения
         DEBUG (bool): Режим отладки
+        PROJECT_NAME (str): Название проекта
+        VERSION (str): Версия проекта
     Warnings:
         Данные переменные должны быть описаны в файле .env
     """
 
     APP_ENV: str = "production"
     DEBUG: bool = False
+    PROJECT_NAME: str
+    VERSION: str
 
     class Config:
         """Класс конфигурации настроек"""
 
-        env_file = ".env"
         env_prefix = "CORE_"
+        env_file = ".env"
+        extra = "ignore"
 
 
 @lru_cache
@@ -52,4 +58,4 @@ def get_core_settings() -> BaseAppSettings:
         >>> def get_all_settings() -> AllSettings:
         ...    return AllSettings()
     """
-    return BaseAppSettings()
+    return BaseAppSettings() # type: ignore[call-arg]

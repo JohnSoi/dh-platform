@@ -4,11 +4,28 @@
 
 Данный пакет предназначен для базовых механизмов продуктов DH
 
+## Установка
+
+```commandline
+poetry add git+https://github.com/JohnSoi/dh-platform.git
+```
+
+Если планируется активное разработка в пакете, то лучше добавить локальную зависимость:
+```commandline
+poetry add ../dh-platform --group dev
+```
+
+
 ## Состав
 
 <pre>
-└── dh_platform
-    └── settings
+dh_platform
+├── models
+│   ├── mixins
+│   └── models
+├── schemas
+│   └── mixins
+└── settings
 </pre>
 
 ## Полезные команды
@@ -16,7 +33,15 @@
 ### Автодокументация
 Документация будет находиться в каталоге: ```docs/_build/index.html```
 
-Для создания автодокументации нужно перейти в каталог ```docs```:
+* Инициализация документации:
+```commandline
+mkdir docs
+cd docs
+sphinx-quickstart
+```
+Далее нужно ответить на несколько вопросов
+
+* Для создания автодокументации нужно перейти в каталог ```docs```:
 ```commandline
 cd docs
 ```
