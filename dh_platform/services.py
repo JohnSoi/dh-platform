@@ -51,10 +51,10 @@ class BaseService(Generic[M]):
             session (AsyncSession): Сессия подключения к БД
 
         Returns:
-            (BaseModel): Данные модели
+            (M): Данные модели
         """
         await cls._before_create(data)
-        new_entity: BaseModel = cls._MODEL(**data)
+        new_entity: M = cls._MODEL(**data)
         session.add(new_entity)
         await session.commit()
         await cls._after_create(new_entity)
@@ -99,7 +99,7 @@ class BaseService(Generic[M]):
     async def _after_read(cls, result: List[M], filters: DictOrNone, navigation: DictOrNone) -> None: ...
 
     @classmethod
-    def _before_create(cls, create_data: dict) -> None: ...
+    async def _before_create(cls, create_data: dict) -> None: ...
 
     @classmethod
-    def _after_create(cls, entity_data: dict) -> None: ...
+    async def _after_create(cls, entity_data: M) -> None: ...
