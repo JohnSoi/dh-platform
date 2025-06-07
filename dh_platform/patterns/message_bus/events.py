@@ -9,7 +9,6 @@ class Event(BaseModel):
     Базовый класс события
 
     Examples:
-        Данные события создания пользователя
         >>> class UserCreatedEvent(Event):
         ...     user_id: str
         ...     email: str

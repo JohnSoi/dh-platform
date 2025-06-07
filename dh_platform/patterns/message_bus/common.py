@@ -19,7 +19,6 @@ class MessageBus:
             handler: обработчик
 
         Examples:
-            Создание подписки на событие:
             >>> from dh_platform.patterns.message_bus import message_bus
             >>>
             >>> message_bus.subscribe(UserCreatedEvent, UserCreatedHandler())
@@ -34,7 +33,6 @@ class MessageBus:
             event: Данные события
 
         Examples:
-            Публикация события:
             >>> from dh_platform.patterns.message_bus import message_bus
             >>>
             >>> event = UserCreatedEvent(user_id="123", email="test@example.com")

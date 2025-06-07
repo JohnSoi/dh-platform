@@ -24,7 +24,6 @@ class BaseService(Generic[M]):
         M: Модель сущности
 
     Examples:
-        Создание сервиса:
         >>> from dh_platform.services import BaseService
         >>> from dh_platform.models import BaseModel
         >>>
@@ -52,6 +51,17 @@ class BaseService(Generic[M]):
 
         Returns:
             (M): Данные модели
+
+        Examples:
+            >>> from dh_platform.services import BaseService
+            >>>
+            >>> class UserModel(BaseModel):
+            ...     ...
+            >>>
+            >>> class UserService(BaseService):
+            >>>     _MODEL = UserModel
+            >>>
+            >>> await UserService.create({})
         """
         await cls._before_create(data)
         new_entity: M = cls._MODEL(**data)
@@ -76,10 +86,9 @@ class BaseService(Generic[M]):
             (List[M]): результаты запроса
 
         Examples:
-            Получение полного списка:
             >>> async def get_users(session: AsyncSession) -> List[UserModel]:
             ...     return UserService.list(session)
-            Получение списка с фильтрацией и навигацией:
+            >>>
             >>> async def get_active_users(session: AsyncSession) -> List[UserModel]:
             ...     return UserService.list(session, {"is_active": True}, {"page": 0, "limit": 30})
         """

@@ -19,15 +19,21 @@ from dh_platform.settings import (
     get_db_settings,
 )
 
+
 db_config: DatabaseSettings = get_db_settings()
 app_config: BaseAppSettings = get_core_settings()
 
 # Создаем асинхронный движок SQLAlchemy
 engine: AsyncEngine = create_async_engine(
-    db_config.dsn,  # Используем свойство dsn
-    echo=app_config.DEBUG,  # Логирование SQL-запросов (для разработки)
+    "postgresql+asyncpg://postgres:1234@localhost:5432/test",
     pool_pre_ping=True,  # Проверка соединения перед использованием
 )
+
+# Используется для автодокументирования
+# engine: AsyncEngine = create_async_engine(
+#     "postgresql+asyncpg://postgres:1234@localhost:5432/test",
+#     pool_pre_ping=True,  # Проверка соединения перед использованием
+# )
 
 # Создаем асинхронную сессию
 AsyncSessionLocal = async_sessionmaker(
@@ -61,7 +67,7 @@ def add_session_db(method: Callable) -> Any:
         >>> @add_session_db
         >>> async def list(
         ...     cls, session: AsyncSession, filters: dict | None = None, navigation: dict | None = None
-        ... ) -> Sequence[Row]:
+        ... ) -> List[M]:
         ...     ...
     """
 
