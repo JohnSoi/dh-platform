@@ -18,7 +18,7 @@ jobs:
       run: |
         poetry update
     - name: Run Black
-      run: poetry run black --check dh_platform/ tests/
+      run: poetry run black --check dh_platform/ tests/ --line-length 120
     - name: Run PyLint
       run: poetry run pylint dh_platform/ tests/ --max-line-length 120
 

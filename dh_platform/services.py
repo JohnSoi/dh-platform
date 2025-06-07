@@ -13,7 +13,7 @@ from dh_platform.models import BaseModel
 from dh_platform.types import DictOrNone
 
 
-M = TypeVar('M', bound=BaseModel)
+M = TypeVar("M", bound=BaseModel)
 
 
 class BaseService(Generic[M]):
@@ -63,9 +63,7 @@ class BaseService(Generic[M]):
 
     @classmethod
     @add_session_db
-    async def list(
-        cls, filters: DictOrNone = None, navigation: DictOrNone = None, *, session: AsyncSession
-    ) -> List[M]:
+    async def list(cls, filters: DictOrNone = None, navigation: DictOrNone = None, *, session: AsyncSession) -> List[M]:
         """
         Запрос списка по сущности с фильтрацией и навигацией
 
