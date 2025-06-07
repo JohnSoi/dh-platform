@@ -43,9 +43,7 @@ class UUIDMixin:
         ...     ...
     """
 
-    uuid: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), default=uuid4, index=True
-    )
+    uuid: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), default=uuid4, index=True)
 
 
 class SoftDeleteMixin:
@@ -59,9 +57,7 @@ class SoftDeleteMixin:
         ...     ...
     """
 
-    deleted_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def soft_delete(self):
         """
@@ -91,12 +87,8 @@ class TimestampMixin:
         >>>
     """
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-    updated_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), onupdate=func.now(), nullable=True
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     @property
     def last_updated(self) -> datetime:

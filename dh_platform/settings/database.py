@@ -39,12 +39,7 @@ class DatabaseSettings(BaseSettings):
     @property
     def dsn(self) -> str:
         """Формирует DSN (Data Source Name) для подключения."""
-        return (
-            f"{self.DRIVER}://"
-            f"{self.USER}:{self.PASSWORD}"
-            f"@{self.HOST}:{self.PORT}"
-            f"/{self.NAME}"
-        )
+        return f"{self.DRIVER}://" f"{self.USER}:{self.PASSWORD}" f"@{self.HOST}:{self.PORT}" f"/{self.NAME}"
 
 
 @lru_cache

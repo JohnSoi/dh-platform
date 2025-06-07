@@ -22,6 +22,4 @@ class BaseModel(DeclarativeBase):
     def __tablename__(self) -> str:
         """Конвертирует CamelCase в snake_case"""
         name = self.__name__
-        return name[0].lower() + "".join(
-            [f"_{c.lower()}" if c.isupper() else c for c in name[1:]]
-        )
+        return name[0].lower() + "".join([f"_{c.lower()}" if c.isupper() else c for c in name[1:]])

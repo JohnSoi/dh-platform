@@ -2,7 +2,8 @@
 
 __author__: str = "Старков Е.П."
 
-from typing import AsyncGenerator
+from functools import wraps
+from typing import Any, AsyncGenerator, Callable
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -40,3 +41,39 @@ async def get_db() -> AsyncGenerator:
     """Генератор сессий для Dependency Injection в FastAPI."""
     async with AsyncSessionLocal() as session:
         yield session
+
+
+def add_session_db(method: Callable) -> Any:
+    """
+    Декоратор для добавления сессии подключения к БД в параметры.
+    Управление откатом и закрытием производиться внутри
+
+    Args:
+        method: метод с запросом
+
+    Returns:
+        Результат метода
+
+    Warnings:
+        Параметр session обязательно должен идти после неименнованных параметров
+
+    Examples:
+        >>> @add_session_db
+        >>> async def list(
+        ...     cls, session: AsyncSession, filters: dict | None = None, navigation: dict | None = None
+        ... ) -> Sequence[Row]:
+        ...     ...
+    """
+
+    @wraps(method)
+    async def wrapper(*args, **kwargs) -> Any:
+        async with AsyncSessionLocal() as session:
+            try:
+                return await method(*args, session=session, **kwargs)
+            except Exception as e:
+                await session.rollback()
+                raise e
+            finally:
+                await session.close()
+
+    return wrapper
