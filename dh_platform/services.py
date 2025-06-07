@@ -3,7 +3,7 @@
 
 __author__: str = "Старков Е.П."
 
-from typing import Type, TypeVar, Generic, List
+from typing import Generic, List, Type, TypeVar
 
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dh_platform.databases import add_session_db
 from dh_platform.models import BaseModel
 from dh_platform.types import DictOrNone
-
 
 M = TypeVar("M", bound=BaseModel)
 

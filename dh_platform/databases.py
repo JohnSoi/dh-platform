@@ -19,7 +19,6 @@ from dh_platform.settings import (
     get_db_settings,
 )
 
-
 db_config: DatabaseSettings = get_db_settings()
 app_config: BaseAppSettings = get_core_settings()
 
