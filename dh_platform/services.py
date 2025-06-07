@@ -5,7 +5,7 @@ __author__: str = "Старков Е.П."
 
 from typing import Type, TypeVar, Generic, List
 
-from sqlalchemy import Result, Row, Sequence, select
+from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dh_platform.databases import add_session_db
