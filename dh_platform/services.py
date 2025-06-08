@@ -5,6 +5,7 @@ __author__: str = "Старков Е.П."
 
 from typing import Generic, List, Type, TypeVar
 
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,12 +41,12 @@ class BaseService(Generic[M]):
 
     @classmethod
     @add_session_db
-    async def create(cls, data: dict, session: AsyncSession) -> BaseModel:
+    async def create(cls, data: PydanticBaseModel, session: AsyncSession) -> BaseModel:
         """
         Создание сущности и запись ее в БД
 
         Args:
-            data (dict): Данные о сущности
+            data_dict (dict): Данные о сущности
             session (AsyncSession): Сессия подключения к БД
 
         Returns:
@@ -62,8 +63,9 @@ class BaseService(Generic[M]):
             >>>
             >>> await UserService.create({})
         """
-        await cls._before_create(data)
-        new_entity: M = cls._MODEL(**data)
+        data_dict: dict = data.model_dump()
+        await cls._before_create(data_dict)
+        new_entity: M = cls._MODEL(**data_dict)
         session.add(new_entity)
         await session.commit()
         await cls._after_create(new_entity)

@@ -1,7 +1,10 @@
+import logging
 from collections import defaultdict
 from typing import Dict, List
 
 from .events import Event, EventHandler, EventType
+
+logger = logging.getLogger("dh_logger")
 
 
 class MessageBus:
@@ -23,6 +26,7 @@ class MessageBus:
             >>>
             >>> message_bus.subscribe(UserCreatedEvent, UserCreatedHandler())
         """
+        logger.info(f"Подписка на события с типом {event_type}")
         self._subscriptions[event_type].append(handler)
 
     async def publish(self, event: Event) -> None:
@@ -38,6 +42,7 @@ class MessageBus:
             >>> event = UserCreatedEvent(user_id="123", email="test@example.com")
             >>> await message_bus.publish(event)
         """
+        logger.info(f"Публикация события с данными {event}")
         handlers = self._subscriptions.get(type(event), [])
         for handler in handlers:
             await handler.handle(event)
