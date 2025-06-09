@@ -24,7 +24,7 @@ app_config: BaseAppSettings = get_core_settings()
 
 # Создаем асинхронный движок SQLAlchemy
 engine: AsyncEngine = create_async_engine(
-    "postgresql+asyncpg://postgres:1234@localhost:5432/test",
+    db_config.dsn,
     pool_pre_ping=True,  # Проверка соединения перед использованием
 )
 

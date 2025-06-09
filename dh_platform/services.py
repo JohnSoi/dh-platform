@@ -6,7 +6,7 @@ __author__: str = "Старков Е.П."
 from typing import Generic, List, Type, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy import Result, select
+from sqlalchemy import Result, select, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dh_platform.databases import add_session_db
@@ -65,7 +65,9 @@ class BaseService(Generic[M]):
         """
         data_dict: dict = data.model_dump()
         await cls._before_create(data_dict)
-        new_entity: M = cls._MODEL(**data_dict)
+
+        new_entity: M = cls._get_new_entity(data_dict)
+
         session.add(new_entity)
         await session.commit()
         await cls._after_create(new_entity)
@@ -101,6 +103,35 @@ class BaseService(Generic[M]):
         await cls._after_read(result, filters, navigation)
 
         return result
+
+    @classmethod
+    @add_session_db
+    async def get_one_by_filter(cls, session: AsyncSession, **filters) -> M | None:
+        query: Select = select(cls._MODEL).filter_by(**filters)
+        data: Result[tuple[M]] = await session.execute(query)
+
+        return data.scalar_one_or_none()
+
+    @classmethod
+    def _get_new_entity(cls, data_dict: dict) -> M:
+        """
+        Получение модели с данными
+
+        Args:
+            data_dict (dict): Данные для создания
+
+        Returns:
+            (M): Модель с данными
+        """
+        entity_data: dict = {}
+
+        for key, value in data_dict.items():
+            if hasattr(cls._MODEL, key):
+                entity_data[key] = value
+
+        new_entity: M = cls._MODEL(**entity_data)
+
+        return new_entity
 
     @classmethod
     async def _before_read(cls, filters: DictOrNone, navigation: DictOrNone) -> None: ...

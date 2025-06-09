@@ -45,7 +45,7 @@ class MessageBus:
         logger.info(f"Публикация события с данными {event}")
         handlers = self._subscriptions.get(type(event), [])
         for handler in handlers:
-            await handler.handle(event)
+            await handler(event)
 
 
 message_bus = MessageBus()
