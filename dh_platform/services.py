@@ -70,7 +70,7 @@ class BaseService(Generic[M]):
 
         session.add(new_entity)
         await session.commit()
-        await cls._after_create(new_entity)
+        await cls._after_create(new_entity, data_dict)
 
         return new_entity
 
@@ -143,4 +143,4 @@ class BaseService(Generic[M]):
     async def _before_create(cls, create_data: dict) -> None: ...
 
     @classmethod
-    async def _after_create(cls, entity_data: M) -> None: ...
+    async def _after_create(cls, entity_data: M, create_data: dict) -> None: ...
