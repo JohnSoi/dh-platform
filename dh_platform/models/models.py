@@ -24,5 +24,5 @@ class BaseModel(DeclarativeBase):
         name = self.__name__
         return name[0].lower() + "".join([f"_{c.lower()}" if c.isupper() else c for c in name[1:]])
 
-    def model_to_dict(self):
+    def to_dict(self):
         return {column.name: getattr(model, column.name) for column in self.__table__.columns}
