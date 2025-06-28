@@ -23,3 +23,6 @@ class BaseModel(DeclarativeBase):
         """Конвертирует CamelCase в snake_case"""
         name = self.__name__
         return name[0].lower() + "".join([f"_{c.lower()}" if c.isupper() else c for c in name[1:]])
+
+    def model_to_dict(model):
+        return {column.name: getattr(model, column.name) for column in model.__table__.columns}
