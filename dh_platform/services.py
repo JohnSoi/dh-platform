@@ -93,6 +93,9 @@ class BaseService(Generic[M]):
             if hasattr(old_data, key):
                 setattr(old_data, key, value)
 
+        if hasattr(old_data, "updated_at"):
+            old_data.updated_at = datetime.now()
+
         session.add(old_data)
         await session.commit()
         await cls._after_update(old_data)
@@ -116,20 +119,20 @@ class BaseService(Generic[M]):
     async def delete(cls, entity_id: int, force_delete: bool = False, session: AsyncSession = None) -> bool:
         data: M = await cls.read(entity_id)
 
-        await cls._before_delete(data)
-
         if hasattr(data, "deleted_at"):
             if data.deleted_at:
                 force_delete = True
-            elif not force_delete:
-                data.deleted_at = datetime.now()
-                session.add(data)
-                await session.commit()
         else:
             force_delete = True
 
+        await cls._before_delete(data, force_delete)
+
         if force_delete:
             await session.delete(data)
+        else:
+            data.deleted_at = datetime.now()
+            session.add(data)
+            await session.commit()
 
         await cls._after_delete(data)
 
@@ -224,7 +227,7 @@ class BaseService(Generic[M]):
         ...
 
     @classmethod
-    async def _before_delete(cls, entity_data: M) -> None:
+    async def _before_delete(cls, entity_data: M, force_delete: bool) -> None:
         ...
 
     @classmethod
