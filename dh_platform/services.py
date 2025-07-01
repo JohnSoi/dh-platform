@@ -3,6 +3,7 @@
 
 __author__: str = "Старков Е.П."
 
+from datetime import datetime
 from typing import Generic, List, Type, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
@@ -12,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dh_platform.databases import add_session_db
 from dh_platform.models import BaseModel
 from dh_platform.types import DictOrNone
+from dh_platform.exceptions import EntityNotFound, UpdateAllowedById
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -38,10 +40,11 @@ class BaseService(Generic[M]):
     """
 
     _MODEL: Type[M]
+    _PRIMARY_KEY: str = "id"
 
     @classmethod
     @add_session_db
-    async def create(cls, data: PydanticBaseModel, session: AsyncSession = None) -> BaseModel: # type: ignore[call-arg]
+    async def create(cls, data: PydanticBaseModel, session: AsyncSession) -> M: # type: ignore[call-arg]
         """
         Создание сущности и запись ее в БД
 
@@ -76,6 +79,62 @@ class BaseService(Generic[M]):
 
     @classmethod
     @add_session_db
+    async def update(cls, new_data: PydanticBaseModel, session: AsyncSession):
+        data_dict: dict = new_data.model_dump()
+
+        if data_dict.get(cls._PRIMARY_KEY) is None:
+            raise UpdateAllowedById()
+
+        old_data: M = await cls.read(entity_id=data_dict.get(cls._PRIMARY_KEY))
+
+        await cls._before_update(data_dict, old_data)
+
+        for key, value in data_dict.items():
+            if hasattr(old_data, key):
+                setattr(old_data, key, value)
+
+        session.add(old_data)
+        await session.commit()
+        await cls._after_update(old_data)
+
+        return old_data
+
+    @classmethod
+    @add_session_db
+    async def read(cls, entity_id: int, session: AsyncSession) -> M:
+        data: M = await cls.get_one_by_filter(id=entity_id)
+
+        if not data:
+            raise EntityNotFound()
+
+        await cls._after_read(data)
+
+        return data
+
+    @classmethod
+    @add_session_db
+    async def delete(cls, entity_id: int, force_delete: bool = False, session: AsyncSession = None) -> bool:
+        data: M = await cls.read(entity_id)
+
+        await cls._before_delete(data)
+
+        if hasattr(data, "deleted_at"):
+            if data.deleted_at:
+                force_delete = True
+            elif not force_delete:
+                data.deleted_at = datetime.now()
+                session.add(data)
+                await session.commit()
+        else:
+            force_delete = True
+
+        if force_delete:
+            await session.delete(data)
+
+        await cls._after_delete(data)
+
+    @classmethod
+    @add_session_db
     async def list(
             cls, filters: DictOrNone = None, navigation: DictOrNone = None, session: AsyncSession = None # type: ignore[call-arg]
     ) -> List[M]:
@@ -97,10 +156,11 @@ class BaseService(Generic[M]):
             >>> async def get_active_users(session: AsyncSession) -> List[UserModel]:
             ...     return UserService.list(session, {"is_active": True}, {"page": 0, "limit": 30})
         """
-        await cls._before_read(filters, navigation)
-        query_result: Result[tuple[M]] = await session.execute(select(cls._MODEL))
+        query: Select = select(cls._MODEL)
+        query = await cls._before_list(query, filters, navigation)
+        query_result: Result[tuple[M]] = await session.execute(query)
         result: List[M] = list(query_result.scalars().all())
-        await cls._after_read(result, filters, navigation)
+        await cls._after_list(result, filters, navigation)
 
         return result
 
@@ -134,13 +194,39 @@ class BaseService(Generic[M]):
         return new_entity
 
     @classmethod
-    async def _before_read(cls, filters: DictOrNone, navigation: DictOrNone) -> None: ...
+    async def _before_list(cls, query: Select, filters: DictOrNone, navigation: DictOrNone) -> None:
+        if filters:
+            for key, value in filters.items():
+                if hasattr(cls._MODEL, key):
+                    query = query.where(key == value)
+
+        return query
 
     @classmethod
-    async def _after_read(cls, result: List[M], filters: DictOrNone, navigation: DictOrNone) -> None: ...
+    async def _after_list(cls, result: List[M], filters: DictOrNone, navigation: DictOrNone) -> None: ...
 
     @classmethod
     async def _before_create(cls, create_data: dict) -> None: ...
 
     @classmethod
     async def _after_create(cls, entity_data: M, create_data: dict) -> None: ...
+
+    @classmethod
+    async def _after_read(cls, entity_data: M) -> None:
+        ...
+
+    @classmethod
+    async def _before_update(cls, data_dict: dict, old_data: M) -> None:
+        ...
+
+    @classmethod
+    async def _after_update(cls, old_data: M) -> None:
+        ...
+
+    @classmethod
+    async def _before_delete(cls, entity_data: M) -> None:
+        ...
+
+    @classmethod
+    async def _after_delete(cls, entity_data: M) -> None:
+        ...

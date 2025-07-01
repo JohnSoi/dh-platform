@@ -43,3 +43,14 @@ class BaseAppException(HTTPException):
         """
         super().__init__(status_code or self._CODE, detail or self._DETAIL, headers)
         logger.exception("Исключение DH: %s [%d]", (detail or self._DETAIL), (status_code or self._CODE))
+
+
+
+class EntityNotFound(BaseAppException):
+    _DETAIL = "Запись по переданному идентификатору не была найдена"
+    _СODE = status.HTTP_404_NOT_FOUND
+
+
+class UpdateAllowedById(BaseAppException):
+    _DETAIL = "Для обновление записи в данных должно быть поле с идентификатором"
+    _CODE = status.HTTP_400_BAD_REQUEST

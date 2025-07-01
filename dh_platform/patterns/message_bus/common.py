@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from .events import Event, EventHandler, EventType
 
@@ -29,7 +29,7 @@ class MessageBus:
         logger.info(f"Подписка на события с типом {event_type}")
         self._subscriptions[event_type].append(handler)
 
-    async def publish(self, event: Event) -> None:
+    async def publish(self, event: Event) -> list[Any]:
         """
         Публикация события всем подписчикам
 
@@ -44,8 +44,12 @@ class MessageBus:
         """
         logger.info(f"Публикация события с данными {event}")
         handlers = self._subscriptions.get(type(event), [])
+        result: list[Any] = []
+
         for handler in handlers:
-            await handler(event)
+            result.append(await handler(event))
+
+        return result
 
 
 message_bus = MessageBus()
